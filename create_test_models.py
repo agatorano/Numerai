@@ -30,16 +30,12 @@ def create_test_model(model, x_train, y_train, x_val, y_val):
     return model
 
 
-def optimize_svc_model(x_train, y_train, x_val, y_val):
+def optimize_model(model, x_train, y_train, x_val, y_val, parameters):
     '''
-    train and run SVM model
+    optimize model with grid_search
     '''
 
-    parameters = {'kernel': ('linear', 'rbf'), 'C': [100, 1000]}
-
-    svc = SVC()
-
-    clf = GridSearchCV(svc, parameters)
+    clf = GridSearchCV(model, parameters)
     clf.fit(x_train, y_train)
 
     for params, mean_score, scores in clf.grid_scores_:
