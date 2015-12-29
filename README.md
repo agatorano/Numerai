@@ -1,4 +1,4 @@
-#Stock Volitility Prediction With Numer.ai
+#Stock Volatility Prediction With Numer.ai
 
 Numer.ai is a hedge fund designed to leverage crowd sourced data science skills. 
 
