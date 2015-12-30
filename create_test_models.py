@@ -1,4 +1,7 @@
+from collections import Counter
+
 import pandas as pd
+import numpy as np
 
 from sklearn.ensemble import RandomForestClassifier as RF
 from sklearn.linear_model import LogisticRegression as LR
@@ -46,6 +49,52 @@ def optimize_model(model, x_train, y_train, x_val, y_val, parameters):
     print(classification_report(y_val, y_pred))
 
     return clf
+
+
+def voting_ensemble_prediction(model_list, x_val, y_val):
+    '''
+    voting based prediction for multiple models
+    find most common label for each observation
+    '''
+
+    predictions = []
+    for model in model_list:
+        pred = model.predict(x_val.as_matrix())
+        pred = pd.Series(pred)
+        predictions.append(pred)
+
+    predictions = pd.concat(predictions, axis=1)
+
+    results = []
+
+    for i in range(len(predictions)):
+        choice = Counter(predictions.iloc[i]).most_common(1)[0][0]
+        results.append(choice)
+
+    results = np.array(results)
+
+    print(accuracy_score(y_val.as_matrix(), results))
+
+    return results
+
+
+def averaging_ensemble_prediction(model_list, x_val, y_val):
+    '''
+    average probability scores from multiple models
+    '''
+
+    predictions = []
+    for model in model_list:        
+        pred_auc = model.predict_proba(x_val.as_matrix())[:,1]
+        pred_auc = pd.Series(pred_auc)
+        predictions.append(pred_auc)
+
+    predictions = pd.concat(predictions, axis=1)
+    pred_auc = predictions.mean(axis=1)
+
+    print(roc_auc_score(y_val.as_matrix(), pred_auc))
+
+    return pred_auc
 
 
 def main():
